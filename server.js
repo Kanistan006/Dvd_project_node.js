@@ -3,7 +3,7 @@ const url = require('url');
 const fs = require('fs');
 const qs = require('querystring');
 
-const employeeController = require('./controllers/employeeController');
+const memberController = require('./controllers/memberController');
 
 const server = http.createServer(function (req, res) {
 
@@ -11,34 +11,34 @@ const server = http.createServer(function (req, res) {
     const pathname = parsedUrl.pathname;
 
     if (req.method === 'GET') {
-        if (pathname === '/employees') {
-            employeeController.listEmployees(req, res);
-        } else if (pathname.startsWith('/employees/view')) {
-            const employeeId = parsedUrl.query.empId;
-            employeeController.viewEmployee(req, res, employeeId);
-        } else if (pathname === '/employees/add') {
-            fs.readFile('./views/addEmployee.html', (err, data) => {
+        if (pathname === '/members') {
+            memberController.listMembers(req, res);
+        } else if (pathname.startsWith('/members/view')) {
+            const memberid = parsedUrl.query.memberId;
+            memberController.viewMember(req, res, memberid);
+        } else if (pathname === '/members/add') {
+            fs.readFile('./views/addMember.html', (err, data) => {
                 res.writeHead(200, { 'Content-Type': 'text/html' });
                 res.write(data);
                 res.end();
             });
-        } else if (pathname === '/employees/edit' && parsedUrl.query.empId) {
-            employeeController.editEmployee(req, res, parsedUrl.query.empId);
+        } else if (pathname === '/members/edit' && parsedUrl.query.memberId) {
+            memberController.editMember(req, res, parsedUrl.query.memberId);
         } else {
             res.writeHead(404, { 'Content-Type': 'text/html' });
             res.end('<h1>Page Not Found</h1>');
         }
     } else if (req.method === 'POST') {
-        if (pathname === '/employees/add') {
+        if (pathname === '/members/add') {
             let body = '';
             req.on('data', chunk => {
                 body += chunk.toString();
             });
             req.on('end', () => {
                 const formData = qs.parse(body);      
-                employeeController.addEmployee(req, res, formData);
+                memberController.addMember(req, res, formData);
             });
-        } else if (pathname === '/employees/update') {
+        } else if (pathname === '/members/update') {
 
             let body = '';
 
@@ -48,7 +48,7 @@ const server = http.createServer(function (req, res) {
 
             req.on('end', () => {
                 const formData = qs.parse(body);
-                employeeController.updateEmployee(req, res, formData);
+                memberController.updateMember(req, res, formData);
             });
         }
     }
